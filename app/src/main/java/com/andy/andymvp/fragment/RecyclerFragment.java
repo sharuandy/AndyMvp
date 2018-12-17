@@ -15,11 +15,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andy.andymvp.R;
+import com.andy.andymvp.data.ResponseData;
+import com.andy.andymvp.interfaces.MainView;
+import com.andy.andymvp.presenter.MainPresenterImpl;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MainView {
 
     @BindView(R.id.srl_list)
     SwipeRefreshLayout srlList;
@@ -31,6 +34,8 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
     TextView tvInfo;
 
     LinearLayoutManager linearLayoutManager;
+
+    private MainPresenterImpl mMainPresenter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,6 +70,37 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
+        mMainPresenter.getDataForList(getContext(), false);
+    }
 
+    @Override
+    public void onGetDataSuccess(String message, ResponseData responseData) {
+
+    }
+
+    @Override
+    public void onGetDataFailure(String message) {
+        srlList.setVisibility(View.GONE);
+        tvInfo.setVisibility(View.VISIBLE);
+        tvInfo.setText(message);
+    }
+
+    @Override
+    public void showProgress() {
+        hideProgress();
+        srlList.setRefreshing(true);
+    }
+
+    @Override
+    public void hideProgress() {
+        if (srlList != null && srlList.isRefreshing()) {
+            srlList.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        mMainPresenter.onDestroy();
+        super.onStop();
     }
 }
