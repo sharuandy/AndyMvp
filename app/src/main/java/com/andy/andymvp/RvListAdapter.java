@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andy.andymvp.data.RowsData;
+import com.andy.andymvp.utils.AppLog;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -18,12 +19,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RvListAdapter extends RecyclerView.Adapter<RvListAdapter.MyViewHolder> {
-    private Context context;
-    private List<RowsData> list = new ArrayList<>();
+    private Context _thisContext;
+    private List<RowsData> rowList = new ArrayList<>();
+    private final String TAG = "RvListAdapter";
 
     public RvListAdapter(Context context, List<RowsData> list) {
-        this.context = context;
-        this.list = list;
+        this._thisContext = context;
+        this.rowList = list;
     }
 
     @Override
@@ -35,12 +37,19 @@ public class RvListAdapter extends RecyclerView.Adapter<RvListAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
+        try {
+            RowsData rowsData = rowList.get(position);
+            holder.tvTitle.setText(rowsData.getTitle());
+            holder.tvDescription.setText(rowsData.getDescription());
+            Picasso.get().load(rowsData.getImageHref()).resize((int) _thisContext.getResources().getDimension(R.dimen.image_width), (int) _thisContext.getResources().getDimension(R.dimen.image_height)).error(R.drawable.ic_launcher_background).noFade().placeholder(R.drawable.ic_launcher_background).into(holder.ivRef);
+        } catch (Exception e) {
+            AppLog.e(TAG, e);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return rowList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
