@@ -26,7 +26,6 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
     <TextView
         android:id="@+id/tv_info"
         android:layout_width="match_parent"
