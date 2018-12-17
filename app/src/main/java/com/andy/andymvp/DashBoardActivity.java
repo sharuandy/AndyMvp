@@ -24,4 +24,8 @@ public class DashBoardActivity extends AppCompatActivity {
             Log.e("TAG", "savedInstanceState != null");
         }
     }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 }

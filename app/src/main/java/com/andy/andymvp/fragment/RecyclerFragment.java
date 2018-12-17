@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.andy.andymvp.DashBoardActivity;
 import com.andy.andymvp.R;
 import com.andy.andymvp.RvListAdapter;
 import com.andy.andymvp.data.ResponseData;
@@ -142,6 +143,8 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onGetDataSuccess(String message, ResponseData responseData) {
         srlList.setVisibility(View.VISIBLE);
         tvInfo.setVisibility(View.GONE);
+
+        ((DashBoardActivity) getActivity()).setActionBarTitle(responseData.getTitle());
 
         rvListAdapter = new RvListAdapter(getContext(), responseData.getRows());
         rvList.setAdapter(rvListAdapter);
