@@ -58,6 +58,7 @@
                     android:layout_height="@dimen/image_height"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_launcher_background" />
 
