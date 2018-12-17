@@ -36,9 +36,10 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
 
+        //Inintializes ButterKnife and binds the views to fragment
         ButterKnife.bind(this, rootView);
-        Log.e("onCreateView", "onCreateView");
 
+        //Configuring Swiperefresh progress colors
         srlList.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,

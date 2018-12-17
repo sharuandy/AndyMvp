@@ -53,6 +53,7 @@ public class RvListAdapter extends RecyclerView.Adapter<RvListAdapter.MyViewHold
 
         public MyViewHolder(View itemView) {
             super(itemView);
+            //Inintializes ButterKnife and binds the view
             ButterKnife.bind(this, itemView);
         }
     }
