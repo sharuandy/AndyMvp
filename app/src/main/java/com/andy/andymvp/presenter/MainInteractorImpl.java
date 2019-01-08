@@ -23,6 +23,7 @@ public class MainInteractorImpl implements MainInteractor {
     private RequestQueue mRequestQueue;
 
     private final String REQUEST_TAG = "DATA_API_CALL";
+    private NetworkApi networkApi;
 
     public MainInteractorImpl(GetDataListener mGetDatalistener) {
         this.mGetDatalistener = mGetDatalistener;
@@ -58,8 +59,8 @@ public class MainInteractorImpl implements MainInteractor {
     }
 
     public void makeDataCall(Context context, String url) {
-
-        NetworkApi networkApi = NetworkApi.getInstance(context);
+        if (networkApi != null)
+            networkApi = NetworkApi.getInstance(context);
         networkApi.cancelAllRequests(REQUEST_TAG);
 
         networkApi.getCompanyList(dataApiSuccessListener(), dataErroListener(), REQUEST_TAG);
