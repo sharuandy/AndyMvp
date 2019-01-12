@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.andy.andymvp.data.ResponseData;
 import com.andy.andymvp.data.RowsData;
 import com.andy.andymvp.utils.AppLog;
 import com.squareup.picasso.Picasso;
@@ -23,9 +24,9 @@ public class RvListAdapter extends RecyclerView.Adapter<RvListAdapter.MyViewHold
     private List<RowsData> rowList = new ArrayList<>();
     private final String TAG = "RvListAdapter";
 
-    public RvListAdapter(Context context, List<RowsData> list) {
+    public RvListAdapter(Context context) {
         this._thisContext = context;
-        this.rowList = list;
+        this.rowList = new ArrayList<>();
     }
 
     @Override
@@ -50,6 +51,12 @@ public class RvListAdapter extends RecyclerView.Adapter<RvListAdapter.MyViewHold
     @Override
     public int getItemCount() {
         return rowList.size();
+    }
+
+    public void setData(List<RowsData> responseData) {
+        this.rowList.clear();
+        this.rowList.addAll(responseData);
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

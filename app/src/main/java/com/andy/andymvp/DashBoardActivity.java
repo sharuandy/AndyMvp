@@ -20,7 +20,6 @@ public class DashBoardActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(android.R.id.content, recyclerFragment, FRAGMENT_TAG).commit();
             Log.e("TAG", "savedInstanceState == null");
         } else {
-            RecyclerFragment test = (RecyclerFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
             Log.e("TAG", "savedInstanceState != null");
         }
     }

@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class MainPresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         mainPresenter = new MainPresenterImpl(mainView);
     }
 
@@ -48,16 +50,22 @@ public class MainPresenterImplTest {
         responseData.setTitle("title");
         responseData.setRows(rowlist);
 
-        Parcel parcel = Parcel.obtain();
-        responseData.writeToParcel(parcel, responseData.describeContents());
-        parcel.setDataPosition(0);
+        //Parcel parcel = Parcel.obtain();
+       // responseData.writeToParcel(parcel, responseData.describeContents());
+        //parcel.setDataPosition(0);
 
-        ResponseData createdFromParcel = ResponseData.CREATOR.createFromParcel(parcel);
+      //  ResponseData createdFromParcel = ResponseData.CREATOR.createFromParcel(parcel);
 
-        mainPresenter.onSuccess("sucess", createdFromParcel);
-        verify(mainView, times(1)).onGetDataSuccess("success", createdFromParcel);
+        mainPresenter.onSuccess("sucess", responseData);
+        verify(mainView, times(1)).onGetDataSuccess("success", responseData);
         verify(mainView, times(1)).hideProgress();
 
+    }
+
+
+    @Test
+    public void OnError() throws Exception {
+        verify(mainView, times(1)).onGetDataFailure("Data Failure");
     }
 
     @Test

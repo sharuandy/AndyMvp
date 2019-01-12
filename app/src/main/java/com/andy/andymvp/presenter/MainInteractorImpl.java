@@ -59,7 +59,7 @@ public class MainInteractorImpl implements MainInteractor {
     }
 
     public void makeDataCall(Context context, String url) {
-        if (networkApi != null)
+        if (networkApi == null)
             networkApi = NetworkApi.getInstance(context);
         networkApi.cancelAllRequests(REQUEST_TAG);
 

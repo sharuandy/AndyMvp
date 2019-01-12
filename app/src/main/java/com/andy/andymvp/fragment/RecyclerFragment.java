@@ -18,8 +18,11 @@ import com.andy.andymvp.DashBoardActivity;
 import com.andy.andymvp.R;
 import com.andy.andymvp.RvListAdapter;
 import com.andy.andymvp.data.ResponseData;
+import com.andy.andymvp.data.RowsData;
 import com.andy.andymvp.interfaces.MainView;
 import com.andy.andymvp.presenter.MainPresenterImpl;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +43,6 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private MainPresenterImpl mMainPresenter;
 
-    private boolean wasLoadingState = false;
     private boolean wasRestoringState = false;
     private Parcelable savedRecyclerLayoutState;
 
@@ -49,6 +51,12 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
     private final String CONTENT_TAG = "DATA_CONTENT";
     private final String STATE_TAG = "DATA_LAYOUT_MANAGER_STATE";
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,53 +73,26 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         linearLayoutManager = new LinearLayoutManager(getContext());
         rvList.setLayoutManager(linearLayoutManager);
+        rvList.setHasFixedSize(true);
+        rvList.setNestedScrollingEnabled(false);
         srlList.setOnRefreshListener(this);
 
+        rvListAdapter = new RvListAdapter(getContext());
+        rvList.setAdapter(rvListAdapter);
 
         mMainPresenter = new MainPresenterImpl(this);
 
-        if (wasLoadingState) {
-            // it was loading already so restart fetching anyway
-            mMainPresenter.getDataForList(getContext(), false);
-        } else {
-            // it was not loading now it wither restores cached data or fetch from network
-            mMainPresenter.getDataForList(getContext(), wasRestoringState);
-        }
-
         if (savedInstanceState != null) {
-            wasLoadingState = savedInstanceState.getBoolean(LOADING_TAG, false);
             wasRestoringState = savedInstanceState.getBoolean(CONTENT_TAG, false);
             savedRecyclerLayoutState = savedInstanceState.getParcelable(STATE_TAG);
         }
+
+        // restores cached data or fetch from network
+        mMainPresenter.getDataForList(getContext(), wasRestoringState);
+
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        boolean isRestoringVal = false;
-        boolean isLoadingState = false;
-
-
-        if (savedInstanceState != null) {
-            isRestoringVal = savedInstanceState.getBoolean(CONTENT_TAG, false);
-            isLoadingState = savedInstanceState.getBoolean(LOADING_TAG, false);
-
-            wasLoadingState = savedInstanceState.getBoolean(LOADING_TAG, false);
-            wasRestoringState = savedInstanceState.getBoolean(CONTENT_TAG, false);
-            savedRecyclerLayoutState = savedInstanceState.getParcelable(STATE_TAG);
-        }
-        if (isLoadingState) {
-            // it was loading already so restart fetching anyway
-            mMainPresenter.getDataForList(getContext(), false);
-        } else {
-            // it was not loading then, now it whether restores cached data or fetch from network
-            mMainPresenter.getDataForList(getContext(), isRestoringVal);
-        }
-
-        super.onActivityCreated(savedInstanceState);
-        // Configure the Swipe refreshing colors
-
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -145,9 +126,7 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
         tvInfo.setVisibility(View.GONE);
 
         ((DashBoardActivity) getActivity()).setActionBarTitle(responseData.getTitle());
-
-        rvListAdapter = new RvListAdapter(getContext(), responseData.getRows());
-        rvList.setAdapter(rvListAdapter);
+        rvListAdapter.setData(responseData.getRows());
 
         if (savedRecyclerLayoutState != null) {
             rvList.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
@@ -158,7 +137,10 @@ public class RecyclerFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onGetDataFailure(String message) {
-        srlList.setVisibility(View.GONE);
+        rvListAdapter.setData(new ArrayList<RowsData>());
+        if (srlList.isRefreshing())
+            srlList.setRefreshing(false);
+        srlList.setVisibility(View.VISIBLE);
         tvInfo.setVisibility(View.VISIBLE);
         tvInfo.setText(message);
     }
